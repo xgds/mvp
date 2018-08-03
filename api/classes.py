@@ -50,13 +50,13 @@ class ModelName(Resource):
     @swagger.operation()
     def delete(self):
         object_list = request.model_object.objects.all()
-        deleted_uuid = []
+        deleted_id = []
         for obj in object_list:
-            deleted_uuid.append(str(obj.id))
+            deleted_id.append(str(obj.id))
             obj.delete()
-        if len(deleted_uuid) == 0:
+        if len(deleted_id) == 0:
             return {}, 204
-        return {"uuid": deleted_uuid}, 200
+        return {"id": deleted_id}, 200
 
     @validate_input()
     @validate_output()
@@ -83,7 +83,7 @@ class ModelNameWithID(Resource):
     @validate_output()
     @swagger.operation()
     def get(self):
-        obj = fix_before_json(request.object_by_uuid.to_mongo())
+        obj = fix_before_json(request.object_by_id.to_mongo())
         obj["id"] = obj["_id"]
         del obj["_id"]
         return obj, 200
@@ -93,15 +93,15 @@ class ModelNameWithID(Resource):
     @swagger.operation()
     def put(self):
         for i, j in request.validated_json.items():
-            request.object_by_uuid[i] = j
-        request.object_by_uuid.save()
+            request.object_by_id[i] = j
+        request.object_by_id.save()
         return {}, 204
 
     @validate_input()
     @validate_output()
     @swagger.operation()
     def delete(self):
-        request.object_by_uuid.delete()
+        request.object_by_id.delete()
         return {}, 204
 
 
@@ -113,7 +113,7 @@ class ModelNameWithIDAndSubModel(Resource):
         new_sub_model = request.sub_model_object(**request.validated_json)
         new_sub_model.save()
         request.sub_model.append(new_sub_model)
-        request.object_by_uuid.save()
+        request.object_by_id.save()
         return {"id": new_sub_model.id}, 201
 
     @validate_input()
@@ -126,8 +126,8 @@ class ModelNameWithIDAndSubModel(Resource):
     @validate_output()
     @swagger.operation()
     def put(self):
-        sub_model_uuid_list = [s['id'] for s in request.validated_json]
-        sub_model_list = [s for s in request.sub_model if s.id in sub_model_uuid_list]
+        sub_model_id_list = [s['id'] for s in request.validated_json]
+        sub_model_list = [s for s in request.sub_model if s.id in sub_model_id_list]
         for s in sub_model_list:
             updates = [u for u in request.validated_json if u.id == s.id][0]
             for i, j in updates.items():

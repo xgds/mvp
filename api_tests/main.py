@@ -15,14 +15,14 @@ while True:
         sleep(0.25)
 
 
-def make_url(model_name: str, uuid: str = None, sub_model_name: str = None) -> str:
+def make_url(model_name: str, id: str = None, sub_model_name: str = None) -> str:
     u = url + model_name
 
     if sub_model_name is not None:
-        return u + "/" + uuid + "/" + sub_model_name
+        return u + "/" + id + "/" + sub_model_name
 
-    if uuid is not None:
-        return u + "/" + uuid
+    if id is not None:
+        return u + "/" + id
 
     return u
 
@@ -39,17 +39,18 @@ print(r.status_code)
 print(r.content)
 print(r.json())
 
-uuid = r.json()["uuid"]
+id = r.json()["id"]
 
 r = get(
-    url=make_url("header", uuid)
+    url=make_url("header", id)
 )
 
 print(r.status_code)
+print(r.content)
 print(r.json())
 
 r = put(
-    url=make_url("header", uuid),
+    url=make_url("header", id),
     json={
         "frame_id": "b2b",
     }
@@ -59,7 +60,7 @@ print(r.status_code)
 print(r.content)
 
 r = get(
-    url=make_url("header", uuid)
+    url=make_url("header", id)
 )
 
 print(r.status_code)
