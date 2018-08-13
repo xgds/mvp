@@ -2,14 +2,83 @@ version: '2.0'
 
 services:
   api:
-    build: ./api
-    ports:
-      - "5000:5000"
-  mongo:
-    image: "mongo:4.1.1-xenial"
-    logging:
-      driver: "none"
+    build: ./api_falcon
     expose:
-      - "27017"
+      - 5000
+
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    expose:
+        - 27017
+    command: mongod --smallfiles --logpath=/dev/null
+
   api_tests:
     build: ./api_tests
+    entrypoint: /bin/bash -c "cd / && python /submodel_tester.py"
+
+  frontend:
+    build: ./frontend_example
+    ports:
+      - "8080:8080"
+    
+  minio:
+    image: "minio/minio"
+    expose: 
+      - "9000"
+    ports:
+      - "9100:9000"
+    volumes:
+      - ./data:/data
+    environment:
+      MINIO_ACCESS_KEY: OMQAGGOL63D7UNVQFY8X
+      MINIO_SECRET_KEY: GcY5RHNmnEWvD/1QxD3spEIGj+Vt9L7eHaAaBTkJ
+    command: server /data
+
+  minio_offsite:
+    image: "minio/minio"
+    expose: 
+      - "9000"
+    ports:
+      - "9200:9000"
+    volumes:
+      - ./data_offsite:/data
+    environment:
+      MINIO_ACCESS_KEY: OMQAGGOL63D7UNVQFY8X
+      MINIO_SECRET_KEY: GcY5RHNmnEWvD/1QxD3spEIGj+Vt9L7eHaAaBTkJ
+    command: server /data 
+
+  minio_client:
+    build: ./minio_client
+
+  ros_master:
+    image: "ros:indigo-ros-base"
+    command:
+      - roscore
+    expose:
+      - "11311"
+
+  ros_interface:
+    build: ./ros_interface
+    environment:
+      - "ROS_HOSTNAME=ros_interface"
+      - "ROS_MASTER_URI=http://ros_master:11311"
+
+  ros_interface_tests:
+    build: ./ros_interface_tests
+    environment:
+      - "ROS_HOSTNAME=ros_interface_tests"
+      - "ROS_MASTER_URI=http://ros_master:11311"
+
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+    ports:
+      - "9000:9000"
