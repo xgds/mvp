@@ -37,7 +37,6 @@ r = post(
 
 print(r.status_code)
 print(r.content)
-print(r.json())
 
 id = r.json()["id"]
 
@@ -47,7 +46,6 @@ r = get(
 
 print(r.status_code)
 print(r.content)
-print(r.json())
 
 r = put(
     url=make_url("header", id),
@@ -64,7 +62,7 @@ r = get(
 )
 
 print(r.status_code)
-print(r.json())
+print(r.content)
 
 r = delete(
     url=make_url("header")
@@ -81,8 +79,40 @@ print(r.status_code)
 print(r.content)
 
 r = options(
-    url=make_url("path")
+    url=make_url("point_stamped")
 )
 
 print(r.status_code)
+print(r.content)
+
+point_stamped = {
+    "header": {
+        "stamp": datetime.utcnow().isoformat(),
+        "frame_id": "a1a",
+    },
+    "point": {
+        "x": -50,
+        "y":  60,
+        "z": -15,
+    }
+}
+
+r = post(
+    url=make_url("point_stamped"),
+    json=point_stamped,
+)
+
+print(r.status_code)
+print(r.content)
+
+
+id = r.json()["id"]
+
+r = get(
+    url=make_url("point_stamped", id)
+)
+
+print(r.status_code)
+print(r.content)
+print()
 pprint(r.json())
