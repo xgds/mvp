@@ -1,22 +1,31 @@
 import falcon
+import falcon_cors
 import mongoengine
-from classes.model import Model
-from classes.model_with_id import ModelWithId
-from classes.submodel_with_id import SubmodelWithId
-from classes.status import Status
-from query.classes import QueryCreation, QueryFetch
-
-processing_threads = []
+from routes.flight import *
+from routes.model  import *
+from routes.status import *
 
 mongoengine.connect(
     db='test',
     host='mongo'
 )
 
-api = falcon.API()
+cors_allow_all = falcon_cors.CORS(
+    allow_all_origins=True,
+    allow_all_headers=True,
+    allow_all_methods=True,
+)
+
+api = falcon.API(middleware=[cors_allow_all.middleware])
+
+# ========================================================
 api.add_route('/', Status())
-api.add_route('/{model_name}', Model())
-api.add_route('/{model_name}/{id}', ModelWithId())
-api.add_route('/{model_name}/{id}/{sub_model_name}', SubmodelWithId())
-api.add_route('/query', QueryCreation())
-api.add_route('/query/{id}', QueryFetch())
+# ========================================================
+api.add_route('/{model}', Model())
+api.add_route('/{model}/{id}', ModelWithID())
+# ========================================================
+api.add_route('/flight', Flight())
+api.add_route('/flight/{id}', FlightWithID())
+api.add_route('/flight/{id}/objects', FlightAllObjects())
+api.add_route('/flight/{id}/{model}', FlightWithModel())
+# ========================================================

@@ -1,0 +1,33 @@
+.content {
+    background-color: white;
+    padding: 10px;
+}
+
+.content .card-body {
+    padding: 10px;
+}
+
+.content .card {
+    height: 100%;
+}
+
+.content > div {
+    height: 100%;
+}
+
+#map {
+    height: 100%;
+}
+
+.content .card button {
+    margin-right: 10px;
+}
+
+.card-center {
+    display: flex;
+    justify-content: center;
+}
+
+.header-dropdown-group {
+    display: flex;
+}

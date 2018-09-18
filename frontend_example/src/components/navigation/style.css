@@ -1,0 +1,14 @@
+.navigation {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+    background-color: rgb(39,44,48);
+
+    padding: 25px;
+}
+
+.bg-navigation {
+    background-color: rgb(39,44,48);
+}

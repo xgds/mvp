@@ -1,86 +1,57 @@
 from mongoengine import *
-import mongoengine
 from datetime import datetime
-import embedded_models
+from json import loads
 
-class CustomDynamicDocument(DynamicDocument):
-    meta = {'allow_inheritance': True}
-
+class JsonMixin:
     @classmethod
-    def dict_to_model(cls, dictionary, model=None):
-        from inspect import isclass
-        if model is None:
-            model = cls
-        assert isclass(model)
-        assert isinstance(dictionary, dict)
-        for i, j in dictionary.items():
-            if isinstance(j, dict):
-                dictionary[i] = cls.dict_to_model(j, getattr(model, i).document_type_obj)
-            elif isinstance(j, list):
-                if isinstance(getattr(model, i), EmbeddedDocumentListField):
-                    dictionary[i] = [cls.dict_to_model(k, getattr(model, i).field.document_type_obj) for k in j]
-                else:
-                    # we should be fine
-                    pass
-            elif isinstance(j, str):
-                if isinstance(getattr(model, i), DateTimeField):
-                    dictionary[i] = datetime.fromisoformat(j)
-        return model(**dictionary)
+    def create_from_json(cls, json: dict):
+        for key, value in json.items():
+            if not isinstance(value, str): continue
+            try:
+                json[key] = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                pass
 
+        return cls(**json)
 
-def model_to_dict(obj):
-    cls = obj.__class__
+    def convert_to_json(self) -> dict:
+        return loads(self.to_json())
 
-    # ==========================================
-    # debugging; remove later
-    # ==========================================
-    import sys
-    print("class: {}, obj: {}".format(cls, obj))
-    sys.stdout.flush()
-    # ==========================================
+class Flight(Document, JsonMixin):
+    '''
+    POST /flight
+    {
+        "start": "2018-09-09 13:00:29",
+        "end":   "2018-10-11 15:01:55"        
+    }
+    '''
     
-    def fix_before_json(j):
-        from bson import ObjectId
-        if isinstance(j, ObjectId):
-            return str(j)
-        if isinstance(j, datetime):
-            return j.isoformat()
-        return j
-
-    if type(obj) in [int, float, str]:
-        return obj
+    # start and end times of this flight
+    start = DateTimeField()
+    end   = DateTimeField()
     
-    if isinstance(obj, datetime):
-        return datetime.isoformat()
+class Object(DynamicDocument, JsonMixin):
+    '''
+    POST /sensor
+    {
+        "flight": "a16dffa",
+        "point": [37.414889, -122.048794],
+        "time": "2018-09-09 13:00:29",
+        ...
+        "temperature": 19.2,
+        "humidity": 89
+    }
+    '''
 
-    if issubclass(cls, mongoengine.base.BaseList):
-        return [model_to_dict(o) for o in obj]
-    
-    returned_json = {}
-    attributes = [
-        (x, getattr(obj, x)) for x in dir(obj)
-        if not x.startswith("_") and not x.endswith("_")
-    ]
-    for name, value in attributes:
-        name_as_attribute = getattr(cls, name)
-        if  not issubclass(name_as_attribute.__class__, mongoengine.base.BaseField):
-            continue
-        if isinstance(name_as_attribute, mongoengine.EmbeddedDocumentField):
-            returned_json[name] = model_to_dict(value)
-        elif isinstance(name_as_attribute, mongoengine.EmbeddedDocumentListField):
-            returned_json[name] = [model_to_dict(value) for x in value]
-        else:
-            returned_json[name] = fix_before_json(value)
-    return returned_json
+    # the name of this object
+    object_name = StringField(required=True)
 
+    # foreign key to the flight of this object
+    flight = ReferenceField(Flight)
 
+    # geospatial and temporal fields
+    point = PointField()
+    time = DateTimeField()
 
-
-class PointStamped(CustomDynamicDocument):
-    header = EmbeddedDocumentField(embedded_models.Header)
-    point  = EmbeddedDocumentField(embedded_models.Point)
-
-
-class Mesh(CustomDynamicDocument):
-    triangles = EmbeddedDocumentListField(embedded_models.MeshTriangle)
-    vertices  = EmbeddedDocumentListField(embedded_models.Point)
+    # all additional fields can be added because
+    # this is a Dynamic Document

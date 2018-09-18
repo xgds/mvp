@@ -1,0 +1,31 @@
+.sidebar {
+    padding: 10px;
+}
+
+.sidebar .list-group {
+    margin-bottom: 50px;
+}
+
+.sidebar .list-group li {
+    line-height: 1;
+}
+
+.list-group-item p.header-item {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.list-group-item p.footer-item {
+    margin-bottom: 0;
+    color: gray;
+}
+
+.list-group-item.active p.footer-item {
+    margin-bottom: 0;
+    color: #becad8;
+}
+
+.list-group-item p {
+    font-size: 12px;
+}
+

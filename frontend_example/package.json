@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --open --hot --host 0.0.0.0",
-    "build": "webpack --mode production"
+    "build": "webpack --mode development --hot"
   },
   "keywords": [],
   "author": "",
@@ -23,8 +23,18 @@
     "webpack-dev-server": "^3.1.5"
   },
   "dependencies": {
+    "bootstrap": "^4.1.1",
+    "copy-webpack-plugin": "^4.5.2",
+    "jquery": "^3.3.1",
+    "moment": "^2.22.2",
+    "namor": "^1.0.1",
+    "node-sass": "^4.9.3",
     "ol": "^5.1.3",
     "react": "^16.4.2",
-    "react-dom": "^16.4.2"
+    "react-dom": "^16.4.2",
+    "react-table": "^6.8.6",
+    "reactstrap": "^6.4.0",
+    "redux": "^4.0.0",
+    "sass-loader": "^7.1.0"
   }
 }

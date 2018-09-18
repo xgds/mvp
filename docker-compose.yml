@@ -4,7 +4,13 @@ services:
   api:
     build: ./api_falcon
     ports:
-      - "127.0.0.1:5000:5000"
+      - "5000:5000"
+    expose:
+      - 5000
+    environment:
+      - "PYTHONUNBUFFERED=1"
+    depends_on:
+      - mongo
   
   mongo:
     image: mongo:latest
@@ -19,7 +25,9 @@ services:
 
   api_tests:
     build: ./api_tests
-    entrypoint: /bin/bash -c "cd / && python /submodel_tester.py"
+    environment:
+      - "PYTHONUNBUFFERED=1"
+    entrypoint: /bin/bash -c "cd / && python /frontend_tests.py"
 
   frontend:
     build: ./frontend_example
@@ -67,12 +75,19 @@ services:
     environment:
       - "ROS_HOSTNAME=ros_interface"
       - "ROS_MASTER_URI=http://ros_master:11311"
+      - "PYTHONUNBUFFERED=1"
+    depends_on:
+      - api
+      - ros_master
 
   ros_interface_tests:
     build: ./ros_interface_tests
     environment:
       - "ROS_HOSTNAME=ros_interface_tests"
       - "ROS_MASTER_URI=http://ros_master:11311"
+      - "PYTHONUNBUFFERED=1"
+    depends_on:
+      - ros_interface
 
   portainer:
     image: portainer/portainer

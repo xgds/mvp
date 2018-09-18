@@ -6,13 +6,22 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import {Vector as VectorLayer} from 'ol/layer.js';
 import {Vector as VectorSource} from 'ol/source.js';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
-
+import React from "react";
 import 'ol/ol.css';
+import './style.css';
+import $ from "jquery";
 
-class OpenLayersMap {
-  constructor(divName) {
+class OpenLayersMap extends React.Component {
+  render() {
+    return (
+      <div id="map"></div>
+    );
+  }
+
+  componentDidMount() {
     this.map = new Map({
-      target: divName,
+      controls: [],
+      target: "map",
       layers: [
         new TileLayer({
           source: new XYZ({
@@ -22,10 +31,16 @@ class OpenLayersMap {
       ],
       view: new View({
         center: [-122.064930, 37.419670],
-        zoom: 18,
+        zoom: 12,
         projection: "EPSG:4326",
       })
     });
+    $("#map").height($("#map").parent().height());
+    this.map.updateSize();
+  }
+
+  constructor(props) {
+    super(props);
   }
 
   drawGeoJSON(latitude, longitude) {
