@@ -2,6 +2,17 @@ import falcon
 import falcon_cors
 import models
 
+class AllModels:
+    # return all objects
+    def on_get(self, request, response):
+        response.media  = [x.convert_to_json() for x in models.Object.objects]
+        response.status = falcon.HTTP_OK if len(response.media) > 0 else falcon.HTTP_NO_CONTENT
+
+    # delete all objects
+    def on_delete(self, request, response):
+        [o.delete() for o in models.Object.objects]
+        response.status = falcon.HTTP_NO_CONTENT
+
 class Model:
     # return all instances of model
     def on_get(self, request, response, model):

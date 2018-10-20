@@ -18,14 +18,13 @@ cors_allow_all = falcon_cors.CORS(
 
 api = falcon.API(middleware=[cors_allow_all.middleware])
 
-# ========================================================
 api.add_route('/', Status())
-# ========================================================
+
+api.add_route('/object', AllModels())
 api.add_route('/{model}', Model())
 api.add_route('/{model}/{id}', ModelWithID())
-# ========================================================
+
 api.add_route('/flight', Flight())
 api.add_route('/flight/{id}', FlightWithID())
 api.add_route('/flight/{id}/objects', FlightAllObjects())
 api.add_route('/flight/{id}/{model}', FlightWithModel())
-# ========================================================

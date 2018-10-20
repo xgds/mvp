@@ -15,7 +15,6 @@ class CardContent extends React.Component {
     }
 
     render() {
-
         let footer = undefined;
         if (this.props.footer) {
             footer = (

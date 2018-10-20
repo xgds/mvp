@@ -38,3 +38,27 @@ body {
     grid-row-start: 2;
     grid-row-end: 3;
 }
+
+.card-body {
+    padding: 0 !important;
+}
+
+.card button {
+    margin-right: 5px !important;
+}
+
+.card-center {
+    height: 50px;
+}
+
+#popoverButton {
+    display: none;
+}
+
+.btn {
+    padding: 2px !important;
+}
+
+.card {
+    border: 0px !important;
+}

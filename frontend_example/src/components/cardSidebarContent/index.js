@@ -11,7 +11,7 @@ import {
 
 class CardSidebarContent extends React.Component {
     componentDidMount() {
-        $(".ReactTable").height($(".card-body").height());
+        // $(".ReactTable").height($(".card-body").height());
     }
 
     render() {

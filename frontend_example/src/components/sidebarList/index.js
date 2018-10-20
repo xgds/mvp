@@ -5,11 +5,19 @@ class SidebarList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            list: props.list,
+            list:   [],
             active: [],
         };
-        this.store = props.store;
+        this.store = props.flightStore;
         this.content = props.content;
+    }
+
+    componentDidMount() {
+        this.store.subscribe(() => (this.setState(
+            {
+                list: this.props.flightStore.getState().allFlights
+            }
+        )));
     }
 
     onClick(id) {
@@ -20,30 +28,24 @@ class SidebarList extends React.Component {
                     active: previousState.active.filter((item) => (item != id))
                 })
             );
-            if (this.content == "flights")
-            {
-                this.store.dispatch(
-                    {
-                        type: "disable-flight",
-                        flight: id,
-                    }
-                );
-            }
+            this.store.dispatch(
+                {
+                    type: "disable-flight",
+                    flight: this.state.list[id]._id.$oid,
+                }
+            );
         } else {
             this.setState(
                 previousState => ({
                     active: previousState.active.concat([id])
                 })
             );
-            if (this.content == "flights")
-            {
-                this.store.dispatch(
-                    {
-                        type: "enable-flight",
-                        flight: id,
-                    }
-                );
-            }
+            this.store.dispatch(
+                {
+                    type: "enable-flight",
+                    flight: this.state.list[id]._id.$oid,
+                }
+            );
         }
     }
 
@@ -55,9 +57,9 @@ class SidebarList extends React.Component {
                 active={this.state.active.includes(id)}
                 className="list-group-item"
             >
-            <p className="header-item">{r}</p>
-            <p className="footer-item">15:55 05/06/2018</p>
-            <p className="footer-item">18:20 06/06/2018</p>
+                <p className="header-item">{r._id.$oid.substring(r._id.$oid.length - 4)}</p>
+                <p className="footer-item">{r.start.$date}</p>
+                <p className="footer-item">{r.end.$date}</p>
             </ListGroupItem>
         ));
         return (
