@@ -98,5 +98,3 @@ for _ in range(10):
         url=url + "flight/" + flight_id + "/objects"
     )
     assert r.status_code == 200
-
-print(flight_ids_list)

@@ -29,71 +29,16 @@ services:
       - "PYTHONUNBUFFERED=1"
     entrypoint: /bin/bash -c "cd / && python /frontend_tests.py"
 
-  # frontend:
-  #   build: ./frontend_example
-  #   ports:
-  #     - "8080:8080"
-    
-  # minio:
-  #   image: "minio/minio"
-  #   expose: 
-  #     - "9000"
-  #   ports:
-  #     - "9100:9000"
-  #   volumes:
-  #     - ./data:/data
-  #   environment:
-  #     MINIO_ACCESS_KEY: OMQAGGOL63D7UNVQFY8X
-  #     MINIO_SECRET_KEY: GcY5RHNmnEWvD/1QxD3spEIGj+Vt9L7eHaAaBTkJ
-  #   command: server /data
+  frontend:
+    build: ./frontend_example
+    ports:
+      - "80:80"
 
-  # minio_offsite:
-  #   image: "minio/minio"
-  #   expose: 
-  #     - "9000"
-  #   ports:
-  #     - "9200:9000"
-  #   volumes:
-  #     - ./data_offsite:/data
-  #   environment:
-  #     MINIO_ACCESS_KEY: OMQAGGOL63D7UNVQFY8X
-  #     MINIO_SECRET_KEY: GcY5RHNmnEWvD/1QxD3spEIGj+Vt9L7eHaAaBTkJ
-  #   command: server /data 
-
-  # minio_client:
-  #   build: ./minio_client
-
-  # ros_master:
-  #   image: "ros:indigo-ros-base"
-  #   command:
-  #     - roscore
-  #   expose:
-  #     - "11311"
-
-  # ros_interface:
-  #   build: ./ros_interface
-  #   environment:
-  #     - "ROS_HOSTNAME=ros_interface"
-  #     - "ROS_MASTER_URI=http://ros_master:11311"
-  #     - "PYTHONUNBUFFERED=1"
-  #   depends_on:
-  #     - api
-  #     - ros_master
-
-  # ros_interface_tests:
-  #   build: ./ros_interface_tests
-  #   environment:
-  #     - "ROS_HOSTNAME=ros_interface_tests"
-  #     - "ROS_MASTER_URI=http://ros_master:11311"
-  #     - "PYTHONUNBUFFERED=1"
-  #   depends_on:
-  #     - ros_interface
-
-  # portainer:
-  #   image: portainer/portainer
-  #   command: -H unix:///var/run/docker.sock
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ./portainer_data:/data
-  #   ports:
-  #     - "9000:9000"
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+    ports:
+      - "9000:9000"
