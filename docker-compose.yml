@@ -2,6 +2,7 @@ version: '2.0'
 
 services:
   api:
+    # currently falcon api
     build: ./api_falcon
     ports:
       - "5000:5000"
@@ -30,6 +31,7 @@ services:
     entrypoint: /bin/bash -c "cd / && python /frontend_tests.py"
 
   frontend:
+    # react frontend example
     build: ./frontend_example
     ports:
       - "80:80"
@@ -42,3 +44,12 @@ services:
       - ./portainer_data:/data
     ports:
       - "9000:9000"
+  
+#  aurelia:
+#    image: webgnostics/aurelia:latest
+#    volumes:
+#      - ./aurelia_test:/var/www/src
+#    ports:
+#      - "7000:7000"
+#      - "3001:3001"
+#    command: au run -watch  # none of these ideas worked, I have the codebase within aurelia_test from their boilerplate
